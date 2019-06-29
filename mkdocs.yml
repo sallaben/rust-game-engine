@@ -1,0 +1,4 @@
+site_name: Rust Game Engine
+nav:
+    - Home: index.md
+    - About: about.md
