@@ -5,3 +5,4 @@ authors = ["sallaben <steven.allaben@gmail.com>", "paranoidandroid81 <smdkorst@g
 edition = "2018"
 
 [dependencies]
+sdl2 = "0.32.2"
