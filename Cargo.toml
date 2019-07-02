@@ -1,0 +1,7 @@
+[package]
+name = "rust-game-engine"
+version = "0.1.0"
+authors = ["sallaben <steven.allaben@gmail.com>", "paranoidandroid81 <smdkorst@gmail.com>"]
+edition = "2018"
+
+[dependencies]
