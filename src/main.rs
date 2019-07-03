@@ -1,5 +1,5 @@
 use winit::{
-    dpi::LogicalSize, CreationError, Event, EventsLoop, Window, WindowBuilder, WindowEvent,
+    dpi::LogicalSize, CreationError, Event, EventsLoop, Window, WindowBuilder, WindowEvent, KeyboardInput, VirtualKeyCode
 };
 
 pub struct WinitState {
@@ -39,12 +39,20 @@ fn main() {
 
     let mut running = true;
     while running {
-        winit_state.events_loop.poll_events(|event| match event {
-            Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
-                ..
-            } => running = false,
-            _ => (),
-        });
+        winit_state.events_loop.poll_events(|event| 
+            if let Event::WindowEvent { event, .. } = event {
+                match event {
+                    WindowEvent::CloseRequested |
+                    WindowEvent::KeyboardInput {
+                        input: KeyboardInput {
+                            virtual_keycode: Some(VirtualKeyCode::Escape),
+                            ..
+                        },
+                        ..
+                    } => running = false,
+                    _ => (),
+                }
+            }
+        );
     }
 }
