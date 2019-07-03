@@ -1,41 +1,50 @@
-extern crate sdl2; 
+use winit::{
+    dpi::LogicalSize, CreationError, Event, EventsLoop, Window, WindowBuilder, WindowEvent,
+};
 
-// use sdl2::pixels::Color;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use std::time::Duration;
+pub struct WinitState {
+    pub events_loop: EventsLoop,
+    pub window: Window,
+}
 
-pub fn main() {
-    let sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
- 
-    let window = video_subsystem.window("rust-game-engine", 800, 600)
-        .position_centered()
-        .build()
-        .unwrap();
- 
-    let mut canvas = window.into_canvas().build().unwrap();
- 
-    canvas.clear();
-    canvas.present();
+impl WinitState {
+    pub fn new<T: Into<String>>(title: T, size: LogicalSize) -> Result<Self, CreationError> {
+        let events_loop = EventsLoop::new();
+        let output = WindowBuilder::new()
+            .with_title(title)
+            .with_dimensions(size)
+            .build(&events_loop);
+        output.map(|window| Self {
+            events_loop,
+            window,
+        })
+    }
+}
 
-    let mut event_pump = sdl_context.event_pump().unwrap();
-    let tickrate = Duration::new(0, 1_000_000_000u32 / 60);
-    'running: loop {
-        canvas.clear();
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit {..} |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                    break 'running
-                },
-                _ => {}
-            }
-        }
+impl Default for WinitState {
+    fn default() -> Self {
+        Self::new(
+            "rust-game-engine",
+            LogicalSize {
+                width: 800.0,
+                height: 600.0,
+            },
+        )
+        .expect("Could not create a window!")
+    }
+}
 
-        // The rest of the game loop goes here...
+fn main() {
+    let mut winit_state = WinitState::default();
 
-        canvas.present();
-        ::std::thread::sleep(tickrate);
+    let mut running = true;
+    while running {
+        winit_state.events_loop.poll_events(|event| match event {
+            Event::WindowEvent {
+                event: WindowEvent::CloseRequested,
+                ..
+            } => running = false,
+            _ => (),
+        });
     }
 }
