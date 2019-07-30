@@ -5,7 +5,7 @@ authors = ["sallaben <steven.allaben@gmail.com>", "paranoidandroid81 <mpk44@pitt
 edition = "2018"
 
 [features]
-default = []
+default = ["gfx-backend-vulkan"]
 metal = ["gfx-backend-metal"]
 dx12 = ["gfx-backend-dx12"]
 vulkan = ["gfx-backend-vulkan"]
@@ -13,7 +13,7 @@ vulkan = ["gfx-backend-vulkan"]
 [dependencies]
 gfx-hal = "0.2.1"
 rendy = "0.3.1"
-winit = "0.20.0-alpha1"
+winit = "0.20.0-alpha2"
 log = "0.4.6"
 simple_logger = "1.3.0"
 arrayvec = "0.4.10"
