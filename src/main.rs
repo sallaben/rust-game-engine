@@ -10,7 +10,10 @@ use gfx_backend_metal as back;
 use gfx_backend_vulkan as back;
 
 use winit::{
-    dpi::LogicalSize, event, event_loop, window
+    dpi::LogicalSize, 
+    event::Event, 
+    event_loop::EventLoop, 
+    window::Window
 };
 use log::{error, warn, info, debug, trace};
 
@@ -26,8 +29,8 @@ use gfx_hal::{
     pool::{CommandPool, CommandPoolCreateFlags},
     pso::{PipelineStage, Rect},
     queue::{family::QueueGroup, Submission},
-    window::{PresentMode, Swapchain, SwapchainConfig, CompositeAlpha},
-    Backend, Gpu, Graphics, Instance, QueueFamily, Surface,
+    window::{PresentMode, Swapchain, SwapchainConfig},
+    Backend, Gpu, Graphics, Instance, QueueFamily, Surface, Features,
 };
 
 pub const WINDOW_NAME: &str = "rust-game-engine"; 
@@ -82,7 +85,7 @@ impl HalState {
             let Gpu { device, mut queues } = unsafe {
                 adapter
                     .physical_device
-                    .open(&[(&queue_family, &[1.0; 1])])
+                    .open(&[(&queue_family, &[1.0; 1])], Features::empty())
                     .map_err(|_| "Couldn't open the PhysicalDevice!")?
             };
             let queue_group = queues
@@ -98,25 +101,26 @@ impl HalState {
         
         // Create A Swapchain, this is extra long
         let (swapchain, extent, backbuffer, format, frames_in_flight) = {
-            let (caps, preferred_formats, present_modes, composite_alphas) = surface.compatibility(&adapter.physical_device);
+            let (caps, preferred_formats, present_modes) = surface.compatibility(&adapter.physical_device);
+            let composite_alphas = caps.composite_alpha;
             info!("{:?}", caps);
             info!("Preferred Formats: {:?}", preferred_formats);
             info!("Present Modes: {:?}", present_modes);
             info!("Composite Alphas: {:?}", composite_alphas);
             //
             let present_mode = {
-                [Mailbox, Fifo, Relaxed, Immediate]
+                [PresentMode::Mailbox, PresentMode::Fifo, PresentMode::Relaxed, PresentMode::Immediate]
                     .iter()
                     .cloned()
                     .find(|pm| present_modes.contains(pm))
                     .ok_or("No PresentMode values specified!")?
             };
-            use gfx_hal::window::CompositeAlpha::*;
             let composite_alpha = {
-                [Opaque, Inherit, PreMultiplied, PostMultiplied]
+                use gfx_hal::window::CompositeAlpha as ca;
+                [ca::OPAQUE, ca::INHERIT, ca::PREMULTIPLIED, ca::POSTMULTIPLIED]
                     .iter()
                     .cloned()
-                    .find(|ca| composite_alphas.contains(ca))
+                    .find(|c| composite_alphas.contains(c))
                     .ok_or("No CompositeAlpha values specified!")?
             };
             let format = match preferred_formats {
@@ -201,8 +205,7 @@ impl HalState {
         };
 
         // Create The ImageViews
-        let image_views: Vec<_> = match backbuffer {
-            Backbuffer::Images(images) => images
+        let image_views: Vec<_> = backbuffer
                 .into_iter()
                 .map(|image| unsafe {
                 device
@@ -219,9 +222,7 @@ impl HalState {
                     )
                     .map_err(|_| "Couldn't create the image_view for the image!")
                 })
-                .collect::<Result<Vec<_>, &str>>()?,
-            Backbuffer::Framebuffer(_) => unimplemented!("Can't handle framebuffer backbuffer!"),
-        };
+                .collect::<Result<Vec<_>, &str>>()?;
 
         // Create Our FrameBuffers
         let framebuffers: Vec<<back::Backend as Backend>::Framebuffer> = {
