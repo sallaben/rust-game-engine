@@ -5,8 +5,17 @@ authors = ["sallaben <steven.allaben@gmail.com>", "paranoidandroid81 <mpk44@pitt
 edition = "2018"
 
 [dependencies]
-rendy = "0.3.2"
+rendy = "0.4.0"
 log = "0.4.6"
-simple_logger = "1.3.0"
 arrayvec = "0.4.10"
+gfx-hal = "0.3.0"
+lazy_static = "1.3.0"
+failure = "0.1.5"
+env_logger = "0.6.2"
 
+
+[features]
+default = []
+dx12 = ["rendy/dx12"]
+metal = ["rendy/metal"]
+vulkan = ["rendy/vulkan"]
