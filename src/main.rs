@@ -12,6 +12,21 @@ type Backend = rendy::vulkan::Backend;
 
 pub const WINDOW_NAME: &str = "rust-game-engine";
 
+const VERTEX_DATA: [PosColor; 3] = [
+    PosColor {
+        position: Position([-0.5, 0.5, 0.0]),
+        color: Color([1.0, 0.0, 0.0, 1.0]),
+    },
+    PosColor {
+        position: Position([0.0, -0.5, 0.0]),
+        color: Color([0.0, 1.0, 0.0, 1.0]),
+    },
+    PosColor {
+        position: Position([0.5, 0.5, 0.0]),
+        color: Color([0.0, 0.0, 1.0, 1.0]),
+    },
+];
+
 #[cfg(any(feature = "dx12", feature = "metal", feature = "vulkan"))]
 fn main() {
     let mut events_loop = EventsLoop::new();
