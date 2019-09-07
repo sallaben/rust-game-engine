@@ -8,14 +8,15 @@ edition = "2018"
 rendy = "0.4.0"
 log = "0.4.6"
 arrayvec = "0.4.10"
-gfx-hal = "0.3.0"
+gfx-hal = "0.3.1"
 lazy_static = "1.3.0"
 failure = "0.1.5"
 env_logger = "0.6.2"
-
+rendy-shader = "0.4.0"
 
 [features]
 default = []
 dx12 = ["rendy/dx12"]
 metal = ["rendy/metal"]
 vulkan = ["rendy/vulkan"]
+spirv-reflection = ["rendy-shader/spirv-reflection"]
