@@ -18,7 +18,12 @@ use rendy::{
 };
 
 use crate::{
-    SHADER_REFLECTION, VERTEX_DATA, SHADERS
+    VERTEX_DATA
+};
+
+#[cfg(feature = "spirv-reflection")]
+use crate::{
+    SHADER_REFLECTION, SHADERS
 };
 
 #[derive(Debug, Default)]
