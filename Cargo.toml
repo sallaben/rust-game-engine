@@ -6,15 +6,17 @@ edition = "2018"
 
 [dependencies]
 rendy = "0.4.0"
+rendy-shader = "0.4.0"
 log = "0.4.6"
 arrayvec = "0.4.10"
 gfx-hal = "0.3.1"
 lazy_static = "1.3.0"
 failure = "0.1.5"
 env_logger = "0.6.2"
-rendy-shader = "0.4.0"
 shaderc = "0.5.1"
-shaderc-sys = "0.5.1"
+
+[patch.crates-io]
+shaderc = { git = "https://github.com/sallaben/shaderc-rs" }
 
 [features]
 default = []
@@ -22,4 +24,3 @@ dx12 = ["rendy/dx12"]
 metal = ["rendy/metal"]
 vulkan = ["rendy/vulkan"]
 spirv-reflection = ["rendy-shader/spirv-reflection"]
-shaderc_fix = ["shaderc/build-from-source"]
