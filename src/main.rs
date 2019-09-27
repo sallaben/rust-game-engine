@@ -1,5 +1,3 @@
-use failure::Error;
-
 use rendy::{
     command::{Families},
     mesh::{Color, PosColor, Position},
@@ -15,8 +13,6 @@ use rendy::{
 #[cfg(feature = "spirv-reflection")]
 use rendy::shader::SpirvReflection;
 
-#[cfg(not(feature = "spirv-reflection"))]
-use rendy::mesh::AsVertex;
 
 use lazy_static;
 
@@ -28,6 +24,11 @@ type Backend = rendy::dx12::Backend;
 type Backend = rendy::metal::Backend;
 #[cfg(feature = "vulkan")]
 type Backend = rendy::vulkan::Backend;
+#[cfg(feature = "gl")]
+type Backend = gfx_backend_gl::Backend;
+
+//type Backend = gfx_backend_vulkan::Backend;
+
 
 pub const WINDOW_NAME: &str = "rust-game-engine";
 
@@ -46,10 +47,8 @@ const VERTEX_DATA: [PosColor; 3] = [
     },
 ];
 
-#[cfg(feature = "spirv-reflection")]
 lazy_static::lazy_static! {
-    static ref SHADER_REFLECTION: SpirvReflection = SHADERS.reflect().expect("Spir-V shader reflection failed!");
-    pub static ref VERTEX: SpirvShader = SourceShaderInfo::new(
+    static ref VERTEX: SpirvShader = SourceShaderInfo::new(
         include_str!("./shaders/vert.glsl"),
         concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/vert.glsl").into(),
         ShaderKind::Vertex,
@@ -57,19 +56,25 @@ lazy_static::lazy_static! {
         "main",
     ).precompile().expect("Vertex shader Spir-V pre-compilation failed!");
 
-    pub static ref FRAGMENT: SpirvShader = SourceShaderInfo::new(
+    static ref FRAGMENT: SpirvShader = SourceShaderInfo::new(
         include_str!("./shaders/frag.glsl"),
         concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/vert.glsl").into(),
         ShaderKind::Fragment,
         SourceLanguage::GLSL,
         "main",
     ).precompile().expect("Fragment shader Spir-V pre-compilation failed!");
+
     static ref SHADERS: rendy::shader::ShaderSetBuilder = rendy::shader::ShaderSetBuilder::default()
         .with_vertex(&*VERTEX).unwrap()
         .with_fragment(&*FRAGMENT).unwrap();
 }
 
-#[cfg(any(feature = "dx12", feature = "metal", feature = "vulkan"))]
+#[cfg(feature = "spirv-reflection")]
+lazy_static::lazy_static! {
+    static ref SHADER_REFLECTION: SpirvReflection = SHADERS.reflect().unwrap();
+}
+
+#[cfg(any(feature = "dx12", feature = "metal", feature = "vulkan", feature = "gl"))]
 fn run(
     mut events_loop: EventsLoop,
     mut factory: Factory<Backend>,
@@ -120,7 +125,7 @@ fn run(
     }
 }
 
-#[cfg(any(feature = "dx12", feature = "metal", feature = "vulkan"))]
+#[cfg(any(feature = "dx12", feature = "metal", feature = "vulkan", feature = "gl"))]
 fn main() 
 {
     env_logger::init();
@@ -161,7 +166,7 @@ fn main()
 }
 
 // when no features aren't enabled, print error
-#[cfg(not(any(feature = "dx12", feature = "metal", feature = "vulkan")))]
+#[cfg(not(any(feature = "dx12", feature = "metal", feature = "vulkan", feature = "gl")))]
 fn main() 
 {
     println!("Please enable one of the backend features: dx12, metal, vulkan");

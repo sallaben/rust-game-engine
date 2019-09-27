@@ -16,11 +16,21 @@ env_logger = "0.6.2"
 shaderc = "0.5.1"
 
 [patch.crates-io]
-shaderc = { git = "https://github.com/sallaben/shaderc-rs" }
+shaderc = { path = "./shaderc-rs/shaderc-rs" }
 
 [features]
 default = []
 dx12 = ["rendy/dx12"]
 metal = ["rendy/metal"]
-vulkan = ["rendy/vulkan"]
+vulkan = ["gfx-backend-vulkan", "rendy/vulkan"] 
+gl = ["gfx-backend-gl", "gfx-backend-gl/winit"]
 spirv-reflection = ["rendy-shader/spirv-reflection"]
+
+[dependencies.gfx-backend-vulkan]
+version = "0.3"
+features= ["winit","x11"]
+optional = true
+
+[dependencies.gfx-backend-gl]
+version = "0.3"
+optional = true

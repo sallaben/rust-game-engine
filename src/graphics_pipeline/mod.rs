@@ -8,6 +8,7 @@ use gfx_hal::{
 use rendy::{
     command::{QueueId, RenderPassEncoder},
     factory::{Factory},
+    mesh::{PosColor, AsVertex},
     graph::{
         render::{SimpleGraphicsPipelineDesc, SimpleGraphicsPipeline, PrepareResult},
         GraphContext, NodeBuffer, NodeImage
@@ -18,12 +19,12 @@ use rendy::{
 };
 
 use crate::{
-    VERTEX_DATA
+    VERTEX_DATA, SHADERS
 };
 
 #[cfg(feature = "spirv-reflection")]
 use crate::{
-    SHADER_REFLECTION, SHADERS
+    SHADER_REFLECTION
 };
 
 #[derive(Debug, Default)]
