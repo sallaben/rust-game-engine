@@ -16,7 +16,7 @@ env_logger = "0.6.2"
 shaderc = "0.5.1"
 
 [patch.crates-io]
-shaderc = { path = "./shaderc-rs/shaderc-rs" }
+shaderc = { git = "https://github.com/sallaben/shaderc-rs" }
 
 [features]
 default = []
