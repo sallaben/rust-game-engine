@@ -49,16 +49,16 @@ const VERTEX_DATA: [PosColor; 3] = [
 
 lazy_static::lazy_static! {
     static ref VERTEX: SpirvShader = SourceShaderInfo::new(
-        include_str!("./shaders/vert.glsl"),
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/vert.glsl").into(),
+        include_str!("shaders/vert.glsl"),
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/vert,glsl").into(),
         ShaderKind::Vertex,
         SourceLanguage::GLSL,
         "main",
     ).precompile().expect("Vertex shader Spir-V pre-compilation failed!");
 
     static ref FRAGMENT: SpirvShader = SourceShaderInfo::new(
-        include_str!("./shaders/frag.glsl"),
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/vert.glsl").into(),
+        include_str!("shaders/frag.glsl"),
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/shaders/frag.glsl").into(),
         ShaderKind::Fragment,
         SourceLanguage::GLSL,
         "main",
